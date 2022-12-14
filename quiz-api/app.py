@@ -10,3 +10,8 @@ def hello_world():
 
 if __name__ == "__main__":
     app.run()
+
+
+@app.route('/quiz-info',methods=['GET'])
+def GetQuizInfo():
+    return {"size":0,"scores": []}, 200
