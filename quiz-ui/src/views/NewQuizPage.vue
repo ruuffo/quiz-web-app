@@ -1,16 +1,12 @@
 <template>
-  <h1>Home page</h1>
-  <div v-for="scoreEntry in registeredScores" v-bind:key="scoreEntry.date">
-    {{ scoreEntry.playerName }} - {{ scoreEntry.score }}
-  </div>
-  <router-link to="/start-new-quiz-page">Démarrer le quiz !</router-link>
+  <h1>New Quiz Page</h1>
 </template>
 
 <script>
 import quizApiService from "@/services/QuizApiService";
 
 export default {
-  name: "HomePage",
+  name: "NewQuizPage",
   data() {
     return {
       registeredScores: []
