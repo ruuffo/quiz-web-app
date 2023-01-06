@@ -22,6 +22,20 @@ def GetQuizInfo():
     return {"size": 0, "scores": []}, 200
 
 
+@app.route('/questions/<int:id>', methods=['GET'])
+def get_question_by_id(id: int):
+    return db_utils.get_question_by_id(id)
+
+@app.route('/questions/<int:id>', methods=['PUT'])
+def update_question(id: int):
+    return db_utils.update_question(id)
+
+@app.route('/questions', methods=['GET'])
+def get_question_by_position():
+    position = request.args.get('position')
+    return db_utils.get_question_by_position(position)
+
+
 @app.route('/login', methods=['POST'])
 def postLogin():
     payload = request.get_json()
@@ -33,8 +47,6 @@ def postLogin():
 
 @app.route('/questions', methods=['POST'])
 def add_question():
-
-
     auth_header = request.headers.get('Authorization')
     if auth_header is None:
         return 'Unauthorized', 401
@@ -47,23 +59,80 @@ def add_question():
         jwt_utils.decode_token(auth_token)
     except jwt_utils.TokenError:
         return 'Unauthorized', 401
-
     # If the client is authenticated, proceed with adding the question to the database
     return db_utils.add_question()
 
 
 @app.route('/questions/<int:id>', methods=['DELETE'])
-def delete_question(id : int):
+def delete_question(id: int):
+    auth_header = request.headers.get('Authorization')
+    if auth_header is None:
+        return 'Unauthorized', 401
+
+    auth_type, auth_token = auth_header.split()
+    if auth_type != 'Bearer':
+        return 'Unauthorized', 401
+
+    try:
+        jwt_utils.decode_token(auth_token)
+    except jwt_utils.TokenError:
+        return 'Unauthorized', 401
     return db_utils.delete_question(id)
 
+@app.route('/questions/<int:position>', methods=['PUT'])
+def set_question_at_position(position: int):
+    auth_header = request.headers.get('Authorization')
+    if auth_header is None:
+        return 'Unauthorized', 401
+
+    auth_type, auth_token = auth_header.split()
+    if auth_type != 'Bearer':
+        return 'Unauthorized', 401
+
+    try:
+        jwt_utils.decode_token(auth_token)
+    except jwt_utils.TokenError:
+        return 'Unauthorized', 401
+    return db_utils.set_question_at_position(position)
 
 @app.route('/questions/all', methods=['DELETE'])
 def delete_all_questions():
+    auth_header = request.headers.get('Authorization')
+    if auth_header is None:
+        return 'Unauthorized', 401
+
+    auth_type, auth_token = auth_header.split()
+    if auth_type != 'Bearer':
+        return 'Unauthorized', 401
+
+    try:
+        jwt_utils.decode_token(auth_token)
+    except jwt_utils.TokenError:
+        return 'Unauthorized', 401
     return db_utils.delete_all_questions()
+
+
+@app.route('/participations/all', methods=['DELETE'])
+def delete_all_participations():
+    auth_header = request.headers.get('Authorization')
+    if auth_header is None:
+        return 'Unauthorized', 401
+
+    auth_type, auth_token = auth_header.split()
+    if auth_type != 'Bearer':
+        return 'Unauthorized', 401
+
+    try:
+        jwt_utils.decode_token(auth_token)
+    except jwt_utils.TokenError:
+        return 'Unauthorized', 401
+    return db_utils.delete_all_participations()
+
 
 @app.route('/rebuild-db', methods=['POST'])
 def rebuild_db():
     return db_utils.rebuild_db()
+
 
 if __name__ == "__main__":
     app.run()
