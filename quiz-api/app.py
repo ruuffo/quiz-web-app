@@ -36,15 +36,18 @@ def add_question():
     return db_utils.add_question()
 
 
-@app.route('/questions/1', methods=['DEL'])
-def delete_question():
-    return db_utils.delete_question()
+@app.route('/questions/<int:id>', methods=['DELETE'])
+def delete_question(id : int):
+    return db_utils.delete_question(id)
 
 
-@app.route('/questions/all', methods=['DEL'])
+@app.route('/questions/all', methods=['DELETE'])
 def delete_all_questions():
     return db_utils.delete_all_questions()
 
+@app.route('/rebuild-db', methods=['POST'])
+def rebuild_db():
+    return db_utils.rebuild_db()
 
 if __name__ == "__main__":
     app.run()
