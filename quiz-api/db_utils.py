@@ -22,16 +22,28 @@ def get_quiz_info():
 
     cursor.execute('SELECT COUNT(*) FROM questions')
     nb_questions = cursor.fetchone()[0]
-    cursor.execute("SELECT * FROM participations")
-    participations = cursor.fetchall()
+    cursor.execute("SELECT DISTINCT playerName FROM participations")
+    participants = cursor.fetchall()
     scores=[]
-    for participation in participations:
-        pass
-        print(participation)
-        cursor.execute("SELECT is_correct FROM answers WHERE position = ? AND idx_answer = ?",(participation[1],participation[3]))
-        score_participant += cursor.fetchone()[0]
 
-    return {"size": nb_questions, "scores": scores}, 200
+    for participant in participants:
+        score_participant=0
+        playerName = participant[0]
+        cursor.execute("SELECT answers,question_position FROM participations WHERE playerName = ?",(playerName,))
+        participations = cursor.fetchall()
+        for participation in participations:
+            answer = participation[0]
+            question_position = participation[1]
+            question = Question.from_json(get_question_by_position(question_position))
+            for i in range(0,len(question.possibleAnswers)):
+                if question.possibleAnswers[i]["isCorrect"] == True:
+                    idx_correct_answer =i+1
+                    break
+            if answer == idx_correct_answer:
+                score_participant+=1
+        scores.append({"playerName":playerName,"score":score_participant})
+    sorted_scores = sorted(scores, key=lambda x: x["score"], reverse=True)
+    return {"size": nb_questions, "scores": sorted_scores}, 200
 
 
 def position_reordering(position: int):
@@ -209,14 +221,17 @@ def register_participation():
         data = request.get_json()
         if len(data["answers"]) != nb_questions:
             return Response(response='The number of question is incorrect', status=400)
-        score_participant=0
+
         for i in range(0, len(data["answers"])):
 
             cursor.execute(
                 "INSERT INTO participations (playerName,answers,question_position) VALUES (?,?,?)",(data["playerName"],data["answers"][i],i+1))
-            cursor.execute("SELECT is_correct FROM answers WHERE position = ? AND idx_answer = ?",(i+1,data["answers"][i]))
-            score_participant+=cursor.fetchone()[0]
 
+        scores=get_quiz_info()[0]['scores']
+        for player in scores:
+            if player["playerName"]==data["playerName"]:
+                score_participant= player['score']
+                break
         return {"score":score_participant,"playerName":data["playerName"]},200
 
 
@@ -246,21 +261,16 @@ def update_question(id: int):
     # Si la question n'a pas été trouvée, retourner une erreur 404
     if not isinstance(question_json, str):
         return Response(response=f'Question with id "{id}" does not exists', status=404)
-    print(question_json)
+
     question = Question.from_json(question_json)
     connection = connect_to_database()
     cursor = connection.cursor()
 
     # Récupérer les données de la requête
     data = request.get_json()
-    print(data)
-    print(question.to_json())
-
     current_position = question.position
-
     new_position = data["position"]
-    print("current_position: ", current_position)
-    print("new_position: ", new_position)
+
     #  Si la nouvelle position est inférieure à la position actuelle, décaler les questions entre la nouvelle position et la position actuelle d'une position vers le bas
     if new_position < current_position:
         cursor.execute(
