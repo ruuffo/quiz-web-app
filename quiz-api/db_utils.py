@@ -16,6 +16,24 @@ def connect_to_database():
     return connection
 
 
+def get_quiz_info():
+    connection = connect_to_database()
+    cursor = connection.cursor()
+
+    cursor.execute('SELECT COUNT(*) FROM questions')
+    nb_questions = cursor.fetchone()[0]
+    cursor.execute("SELECT * FROM participations")
+    participations = cursor.fetchall()
+    scores=[]
+    for participation in participations:
+        pass
+        print(participation)
+        cursor.execute("SELECT is_correct FROM answers WHERE position = ? AND idx_answer = ?",(participation[1],participation[3]))
+        score_participant += cursor.fetchone()[0]
+
+    return {"size": nb_questions, "scores": scores}, 200
+
+
 def position_reordering(position: int):
     connection = connect_to_database()
     cursor = connection.cursor()
@@ -43,7 +61,7 @@ def add_question():
         data["title"], data["text"], data["image"], data["position"])
 
     sql_insert_question = "insert into questions (title,text,image,position) values(?,?,?,?)"
-    sql_insert_answer = " insert into ANSWERS (question_id,is_correct,text) values(?,?,?)"
+    sql_insert_answer = " insert into ANSWERS (question_id,is_correct,idx_answer,text) values(?,?,?,?)"
     try:
 
         cursor = connection.cursor()
@@ -52,20 +70,20 @@ def add_question():
         question_id = cursor.lastrowid
 
         possible_answers = data["possibleAnswers"]
+        idx_answer = 1
         for possible_answer in possible_answers:
 
             ps = (question_id,
-                  possible_answer["isCorrect"], possible_answer["text"])
+                  possible_answer["isCorrect"], idx_answer, possible_answer["text"])
             cursor.execute(
                 sql_insert_answer, ps)
+            idx_answer += 1
         connection.commit()
-        return {'id': question_id}
+        return {'id': question_id},200
 
     except sqlite3.Error as e:
-
-        print(f"An error occurred: {e}")
         connection.rollback()
-        return None
+        return Response(f"An error occurred: {e}", status=500)
 
 
 def get_question_by_position(position: int):
@@ -85,10 +103,11 @@ def get_question_by_position(position: int):
     answers_data = cursor.fetchall()
 
     # Construire l'objet Question à partir des données de la base de données
-    question = Question(title=question_data[1], text=question_data[2],
+    question = Question(_id=question_data[0], title=question_data[1], text=question_data[2],
                         position=question_data[4], image=question_data[3], possibleAnswers=[])
     for answer_data in answers_data:
-        answer = {"text": answer_data[3], "isCorrect": (answer_data[2] != 0)}
+
+        answer = {"text": answer_data[4], "isCorrect": (answer_data[2] != 0)}
         question.possibleAnswers.append(answer)
     # Retourner la question sous forme de dictionnaire
 
@@ -112,42 +131,42 @@ def get_question_by_id(id: int):
     answers_data = cursor.fetchall()
 
     # Construire l'objet Question à partir des données de la base de données
-    question = Question(title=question_data[1], text=question_data[2],
+    question = Question(_id=question_data[0], title=question_data[1], text=question_data[2],
                         position=question_data[4], image=question_data[3], possibleAnswers=[])
     for answer_data in answers_data:
-        answer = {"text": answer_data[3], "isCorrect": (answer_data[2] != 0)}
+        answer = {"text": answer_data[4], "isCorrect": (answer_data[2] != 0)}
         question.possibleAnswers.append(answer)
     # Retourner la question sous forme de dictionnaire
 
     return question.to_json()
 
 
-def set_question_at_position(current_position: int):
+# def set_question_at_position(id: int):
 
-    connection = connect_to_database()
-    cursor = connection.cursor()
- # Récupérer les données de la requête
-    data = request.get_json()
+#     connection = connect_to_database()
+#     cursor = connection.cursor()
+#  # Récupérer les données de la requête
+#     data = request.get_json()
 
-    new_position=data["position"]
+#     new_position=data["position"]
 
-    # Si la nouvelle position est inférieure à la position actuelle, décaler les questions entre la nouvelle position et la position actuelle d'une position vers le bas
-    if new_position < current_position:
-        cursor.execute(
-            "UPDATE questions SET position = position + 1 WHERE position >= ? AND position < ?", (new_position, current_position))
-    # Si la nouvelle position est supérieure à la position actuelle, décaler les questions entre la position actuelle et la nouvelle position d'une position vers le haut
-    elif new_position > current_position:
-        cursor.execute(
-            "UPDATE questions SET position = position - 1 WHERE position > ? AND position <= ?", (current_position, new_position))
-    connection.commit()
+#     # Si la nouvelle position est inférieure à la position actuelle, décaler les questions entre la nouvelle position et la position actuelle d'une position vers le bas
+#     if new_position < current_position:
+#         cursor.execute(
+#             "UPDATE questions SET position = position + 1 WHERE position >= ? AND position < ?", (new_position, current_position))
+#     # Si la nouvelle position est supérieure à la position actuelle, décaler les questions entre la position actuelle et la nouvelle position d'une position vers le haut
+#     elif new_position > current_position:
+#         cursor.execute(
+#             "UPDATE questions SET position = position - 1 WHERE position > ? AND position <= ?", (current_position, new_position))
+#     connection.commit()
 
-    # Mettre à jour la position de la question
-    cursor.execute(
-        "UPDATE questions SET position=? WHERE position=?", (new_position, current_position))
-    connection.commit()
+#     # Mettre à jour la position de la question
+#     cursor.execute(
+#         "UPDATE questions SET position=? WHERE id=?", (new_position, id))
+#     connection.commit()
 
-    # Retourner un code de réussite
-    return Response(status=200)
+#     # Retourner un code de réussite
+#     return Response(status=200)
 
 
 def rebuild_db():
@@ -167,16 +186,40 @@ def rebuild_db():
 
         # Create 'answers' table
         cursor.execute(
-            "CREATE TABLE answers (id INTEGER PRIMARY KEY AUTOINCREMENT, question_id INTEGER, is_correct INTEGER, text TEXT)")
+            "CREATE TABLE answers (id INTEGER PRIMARY KEY AUTOINCREMENT, question_id INTEGER, is_correct INTEGER,idx_answer INTEGER, text TEXT)")
       # Drop 'participations' table if it exists
         cursor.execute("DROP TABLE IF EXISTS participations")
 
     # Create 'participations' table
         cursor.execute(
-            "CREATE TABLE participations (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, question_id INTEGER, answer_id INTEGER)")
+            "CREATE TABLE participations (id INTEGER PRIMARY KEY AUTOINCREMENT,question_position INTEGER, playerName TEXT, answers INTEGER)")
         connection.commit()
         connection.close()
         return Response("Ok", status=200)
+    except sqlite3.Error as e:
+        return Response(f"An error occurred: {e}", status=500)
+
+
+def register_participation():
+    try:
+        connection = connect_to_database()
+        cursor = connection.cursor()
+        nb_questions = get_quiz_info()[0]["size"]
+
+        data = request.get_json()
+        if len(data["answers"]) != nb_questions:
+            return Response(response='The number of question is incorrect', status=400)
+        score_participant=0
+        for i in range(0, len(data["answers"])):
+
+            cursor.execute(
+                "INSERT INTO participations (playerName,answers,question_position) VALUES (?,?,?)",(data["playerName"],data["answers"][i],i+1))
+            cursor.execute("SELECT is_correct FROM answers WHERE position = ? AND idx_answer = ?",(i+1,data["answers"][i]))
+            score_participant+=cursor.fetchone()[0]
+
+        return {"score":score_participant,"playerName":data["playerName"]},200
+
+
     except sqlite3.Error as e:
         return Response(f"An error occurred: {e}", status=500)
 
@@ -185,7 +228,12 @@ def delete_all_questions():
     connection = connect_to_database()
     try:
         cursor = connection.cursor()
+        cursor.execute("DELETE FROM answers")
         cursor.execute("DELETE FROM questions")
+        cursor.execute(
+            "UPDATE sqlite_sequence SET seq = 0 WHERE name = 'questions'")
+        cursor.execute(
+            "UPDATE sqlite_sequence SET seq = 0 WHERE name = 'answers'")
         connection.commit()
         return Response(status="204", response="All questions have been deleted succesfully.")
     except sqlite3.Error as e:
@@ -193,31 +241,49 @@ def delete_all_questions():
 
 
 def update_question(id: int):
+    question_json = get_question_by_id(id)
+
+    # Si la question n'a pas été trouvée, retourner une erreur 404
+    if not isinstance(question_json, str):
+        return Response(response=f'Question with id "{id}" does not exists', status=404)
+    print(question_json)
+    question = Question.from_json(question_json)
     connection = connect_to_database()
     cursor = connection.cursor()
 
-    # Récupérer la question avec l'identifiant donné
-    cursor.execute("SELECT * FROM questions WHERE id=?", (id,))
-    question_data = cursor.fetchone()
-
-    # Si la question n'a pas été trouvée, retourner une erreur 404
-    if question_data is None:
-        return Response(response=f'Question with id "{id}" does not exists', status=404)
-
     # Récupérer les données de la requête
     data = request.get_json()
+    print(data)
+    print(question.to_json())
 
+    current_position = question.position
+
+    new_position = data["position"]
+    print("current_position: ", current_position)
+    print("new_position: ", new_position)
+    #  Si la nouvelle position est inférieure à la position actuelle, décaler les questions entre la nouvelle position et la position actuelle d'une position vers le bas
+    if new_position < current_position:
+        cursor.execute(
+            "UPDATE questions SET position = position + 1 WHERE position >= ? AND position < ?", (new_position, current_position))
+    # Si la nouvelle position est supérieure à la position actuelle, décaler les questions entre la position actuelle et la nouvelle position d'une position vers le haut
+    elif new_position > current_position:
+        cursor.execute(
+            "UPDATE questions SET position = position - 1 WHERE position > ? AND position <= ?", (current_position, new_position))
+    # connection.commit()
     # Mettre à jour les données de la question dans la base de données
     cursor.execute("UPDATE questions SET title=?, text=?, image=?, position=? WHERE id=?",
                    (data["title"], data["text"], data["image"], data["position"], id))
-    connection.commit()
+
+    # connection.commit()
 
     # Mettre à jour les réponses associées à la question
     cursor.execute("DELETE FROM answers WHERE question_id=?", (id,))
     possible_answers = data["possibleAnswers"]
+    idx_answer = 1
     for possible_answer in possible_answers:
-        cursor.execute("INSERT INTO answers (question_id, is_correct, text) VALUES (?, ?, ?)",
-                       (id, possible_answer["isCorrect"], possible_answer["text"]))
+        cursor.execute("INSERT INTO answers (question_id, is_correct,idx_answer, text) VALUES (?, ?, ?,?)",
+                       (id, possible_answer["isCorrect"], idx_answer, possible_answer["text"]))
+        idx_answer += 1
     connection.commit()
 
     # Retourner un code de réussite
@@ -236,12 +302,24 @@ def delete_all_participations():
 
 
 def delete_question(id: int):
+    question_json = get_question_by_id(id)
+
+    # Si la question n'a pas été trouvée, retourner une erreur 404
+    if not isinstance(question_json, str):
+        return Response(response=f'Question with id "{id}" does not exists', status=404)
+
+    question = Question.from_json(question_json)
+
     connection = connect_to_database()
     try:
         cursor = connection.cursor()
         cursor.execute("DELETE FROM questions WHERE id=?", (id,))
         if cursor.rowcount == 0:
             return Response(response=f'Question with id "{id}" does not exists', status=404)
+        cursor.execute("DELETE FROM answers WHERE question_id=?", (id,))
+        cursor.execute(
+            "UPDATE questions SET position = position - 1 WHERE position > ? ", (question.position,))
+
         connection.commit()
         return Response(response='Question deleted successfully', status=204)
     except sqlite3.Error as e:
