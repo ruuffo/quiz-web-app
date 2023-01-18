@@ -29,6 +29,7 @@ export default {
   },
   getQuizInfo() {
     return this.call("get", "quiz-info");
+    //récupérer le tableau des scores et le nombre total de questions du quiz.
   },
   getQuestion(position) {
     // not implemented

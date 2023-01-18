@@ -1,20 +1,29 @@
 <template>
   <h1>New Quiz Page</h1>
+  <div>
+    <label for="name" class="form-label">Saisissez votre nom :</label>
+    <input type="text" v-model="username" id="name" class="form-control" placeholder="Username" aria-label="Username">
+    <input type="button" @click="launchNewQuiz" class="btn btn-success">
+    <p>{{ username }}</p>
+  </div>
 </template>
 
 <script>
-import quizApiService from "@/services/QuizApiService";
+import participationStorageService from "@/services/ParticipationStorageService";
 
 export default {
   name: "NewQuizPage",
   data() {
+    let username = participationStorageService.getPlayerName();
     return {
-      registeredScores: []
+      username
     };
   },
-  async created() {
-    registeredScores = quizApiService.getQuizInfo().answers;
-    console.log("Composant Home page 'created'");
+  methods: {
+    launchNewQuiz() {
+      participationStorageService.savePlayerName(this.username);
+      this.$router.push('/questions');
+    },
   }
 };
 </script>
