@@ -3,8 +3,7 @@
   <div>
     <label for="name" class="form-label">Saisissez votre nom :</label>
     <input type="text" v-model="username" id="name" class="form-control" placeholder="Username" aria-label="Username">
-    <input type="button" @click="launchNewQuiz" class="btn btn-success">
-    <p>{{ username }}</p>
+    <input type="button" @click="launchNewQuiz" class="btn btn-success" value="Save">
   </div>
 </template>
 
