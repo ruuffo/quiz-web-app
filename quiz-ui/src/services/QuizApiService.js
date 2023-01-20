@@ -32,7 +32,14 @@ export default {
     //récupérer le tableau des scores et le nombre total de questions du quiz.
   },
   getQuestion(position) {
-    return this.call("get", "question?position=" + position);
+    return this.call("get", "questions?position=" + position);
     // not implemented
+  },
+  postParticipation(playerName, answers) {
+    let answer = {
+      "playerName": playerName,
+      "answers": answers
+    }
+    return this.call("post", "participations", answer);
   }
 };

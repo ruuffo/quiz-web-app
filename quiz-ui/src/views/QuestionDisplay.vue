@@ -2,7 +2,7 @@
   <div class="questionDisplay">
     <div>
       <div>
-        <img v-if="question.image" :src="question.image" />
+        <img v-if="question.image" :src="question.image" class="img-thumbnail" />
       </div>
       <div>
         <h1>{{ question.title }}</h1>
@@ -35,5 +35,10 @@ export default {
     display: flex;
     align-items: center;
   }
+}
+
+.img-thumbnail {
+  max-height: 300px;
+  max-width: 500px;
 }
 </style>

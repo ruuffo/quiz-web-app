@@ -3,6 +3,7 @@ import { RouterLink, RouterView } from 'vue-router'
 </script>
 
 <template>
+
   <header>
 
     <div class="wrapper">
@@ -15,6 +16,7 @@ import { RouterLink, RouterView } from 'vue-router'
   </header>
 
   <RouterView />
+
 </template>
 
 <style scoped>
@@ -51,6 +53,16 @@ nav a {
 
 nav a:first-of-type {
   border: 0;
+}
+
+.bg-image-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-repeat: repeat;
 }
 
 @media (min-width: 1024px) {
