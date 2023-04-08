@@ -1,17 +1,20 @@
 <template>
 
+    <div class=" ">
 
-  <h1>Home page</h1>
-  <div v-for="scoreEntry in registeredScores" v-bind:key="scoreEntry.date">
-    {{ scoreEntry.playerName }} - {{ scoreEntry.score }}
-  </div>
+      <h1>Home page</h1>
+      <div v-for="scoreEntry in registeredScores" v-bind:key="scoreEntry.date">
+        {{ scoreEntry.playerName }} - {{ scoreEntry.score }}
+      </div>
 
-  <router-link to="/start-new-quiz-page">Start quiz !</router-link>
+      <router-link to="/start-new-quiz-page">Start quiz !</router-link>
+    </div>
 
 </template>
 
 <script>
 import quizApiService from "@/services/QuizApiService";
+import '../assets/main.css'
 
 export default {
   name: "HomePage",

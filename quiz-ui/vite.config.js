@@ -1,17 +1,23 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from "node:url";
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import postcss from "postcss";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  server : {
-    port : 3000,
+  server: {
+    port: 3000,
   },
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    postcss({
+      plugins: [require("tailwindcss"), require("autoprefixer")],
+    }),
+  ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  }
-})
+      "@": fileURLToPath(new URL("./src", import.meta.url)),
+    },
+  },
+});
