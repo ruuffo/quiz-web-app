@@ -6,7 +6,7 @@
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
 2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
 */
-@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@100;200;300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anuphan:wght@100;200;300;400;500;600;700&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -23,7 +23,7 @@
   /* 2 */
 }
 .bg-gif {
-  background-image: linear-gradient(rgba(135,60,86,0.8), rgba(135, 80, 156, 0.5)), url("./wpp-chihiro.jpg") ;
+  background-image: linear-gradient(rgba(135,60,86,0.8), rgba(135, 80, 156, 0.5)), url("./spirited-away-funny.gif") ;
 }
 
 ::before,

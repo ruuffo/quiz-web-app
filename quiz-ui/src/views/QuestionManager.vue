@@ -1,6 +1,8 @@
 <template>
-  <h1>Question {{ currentQuestionPosition }} / {{ totalNumberOfQuestion }}</h1>
-  <QuestionDisplay :question="currentQuestion" @answer-selected="answerClickedHandler" />
+  <div class=" justify-items-center grid  w-full">
+    <h2 class="">Question {{ currentQuestionPosition }} / {{ totalNumberOfQuestion }}</h2>
+    <QuestionDisplay :question="currentQuestion" @answer-selected="answerClickedHandler" />
+  </div>
 </template>
 
 <script>
