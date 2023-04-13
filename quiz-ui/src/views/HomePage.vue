@@ -1,15 +1,19 @@
 <template>
-
-    <div class=" ">
-
-      <h1>Home page</h1>
+  <div class="justify-center flex">
+    <div class="text-center">
+      <h1 class=" text-2xl m-9">Home page</h1>
+      
       <div v-for="scoreEntry in registeredScores" v-bind:key="scoreEntry.date">
         {{ scoreEntry.playerName }} - {{ scoreEntry.score }}
+
       </div>
+      <router-link to="/start-new-quiz-page" class="hover:bg-blue-400 scale-150 hover:text-gray-700 btn bg-purple-800 text-slate-50 "
+        style="text-shadow: none;">Start
+        quiz !</router-link>
 
-      <router-link to="/start-new-quiz-page">Start quiz !</router-link>
+
     </div>
-
+  </div>
 </template>
 
 <script>

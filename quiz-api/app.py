@@ -31,7 +31,6 @@ def get_question_by_position():
     return db_utils.get_question_by_position(request.args.get('position'))
 
 
-
 @app.route('/questions/<int:id>', methods=['PUT'])
 def update_question(id: int):
     retour_auth = authentification()
@@ -89,6 +88,7 @@ def rebuild_db():
 @app.route('/participations/', methods=['POST'])
 def register_participation():
     return db_utils.register_participation()
+
 
 def authentification():
     auth_header = request.headers.get('Authorization')

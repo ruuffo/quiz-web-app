@@ -4,24 +4,24 @@ import './assets/main.css'
 </script>
 
 <template>
-  <div class=" bg-gif h-screen bg-cover flex justify-center items-center ">
+  <div style="text-shadow: 5px 5px 5px black, 0 0 0.2em black, 0 0 3em black; "
+    class=" bg-gif h-screen bg-cover text-slate-200 font-body flex">
 
-    <header class="absolute inset-x-0 top-0 " ref="headerRef">
+    <header class="absolute top-0 inset-x-0 w-full bg-gradient-to-b from-violet-500 " ref="headerRef">
 
-      <div class=" flex flex-shrink ">
+      <div class=" flex flex-shrink  ">
 
-        <nav class=" flex items-center justify-between p-6 lg:px-8 space-x-4" aria-label="Global">
-          <RouterLink to="/"
-            class=" text-slate-200  text-shadow shadow-indigo-500/50 hover:bg-violet-400 hover:transition-all hover:rounded p-2 " style="text-shadow: 5px 5px 5px black, 0 0 0.2em black, 0 0 3em black;">
+        <nav class=" flex items-center font-extralight p-6 lg:px-5 space-x-3" aria-label="Global">
+          <div class="flex "><img src="../public/Pin_Totoro.webp" class="h-12" /></div>
+          <RouterLink to="/" class="hover:bg-violet-400 hover:rounded p-2 hover:shadow-md hover:shadow-black hover:text-shadow-none">
             Home
           </RouterLink>
-          <RouterLink to="/about"
-            class=" text-slate-200 text-shadow shadow-indigo-500/50 hover:bg-violet-400 hover:transition-all hover:rounded p-2 "  style="text-shadow: 5px 5px 5px black, 0 0 0.2em black, 0 0 3em black;">
+          <RouterLink to="/about" class="hover:bg-violet-400 hover:transition-all hover:rounded p-2 hover:text-shadow-none">
             About</RouterLink>
         </nav>
       </div>
     </header>
-    <div :style="{ marginTop: headerHeight + 'px' }" class="flex justify-center items-center w-50">
+    <div :style="{ marginTop: headerHeight + 'px' }" class="flex w-50 container justify-center">
       <RouterView />
     </div>
   </div>
@@ -40,6 +40,8 @@ export default {
 };
 
 </script>
+
+
 <!-- <style scoped>
 header {
   line-height: 1.5;
