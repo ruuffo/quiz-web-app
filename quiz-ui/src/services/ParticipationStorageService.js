@@ -12,6 +12,6 @@ export default {
     window.localStorage.setItem("participationScore", participationScore);
   },
   getParticipationScore() {
-    return window.localStorage.getItem("participationScore");
+    return window.localStorage.getItem("playerScore.data.score");
   }
 };

@@ -1,4 +1,4 @@
-from flask import Flask, request, g
+from flask import Flask, request
 from flask_cors import CORS
 import jwt_utils
 import db_utils
@@ -7,8 +7,8 @@ from werkzeug.exceptions import Unauthorized
 
 
 app = Flask(__name__)
-CORS(app)
-
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000", "supports_credentials": True}})
+# app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/')
 def hello_world():
@@ -85,9 +85,11 @@ def rebuild_db():
     return db_utils.rebuild_db()
 
 
-@app.route('/participations/', methods=['POST'])
+@app.route('/participations', methods=['POST'])
+# @cross_origin(origin="http://localhost:3000")
 def register_participation():
     return db_utils.register_participation()
+
 
 
 def authentification():

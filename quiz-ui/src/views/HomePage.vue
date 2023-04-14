@@ -2,8 +2,8 @@
   <div class="justify-center flex">
     <div class="text-center">
       <h1 class=" text-2xl m-9">Home page</h1>
-      
-      <div v-for="scoreEntry in registeredScores" v-bind:key="scoreEntry.date">
+
+      <div v-for="scoreEntry in registeredScores" v-bind:key="scoreEntry.date" class=" m-3 sm:text-xl lg:text-xl md:text-xl">
         {{ scoreEntry.playerName }} - {{ scoreEntry.score }}
 
       </div>

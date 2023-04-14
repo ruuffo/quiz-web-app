@@ -36,7 +36,7 @@ export default {
       return questionApiResult.data
     },
     async answerClickedHandler(position) {
-      this.listAnswers.push(position)
+      this.listAnswers.push(position + 1)
       if (this.currentQuestionPosition >= this.totalNumberOfQuestion) {
         this.endQuiz()
       } else {
