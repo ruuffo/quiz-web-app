@@ -5,7 +5,7 @@ import './assets/main.css'
 
 <template>
   <div style="text-shadow: 5px 5px 5px black, 0 0 0.2em black, 0 0 3em black; "
-    class=" bg-gif h-screen bg-cover text-slate-200 font-body sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-2xl flex">
+    class=" bg-gif h-screen bg-cover text-slate-200 font-body sm:text-sm md:text-md lg:text-lg xl:text-lg 2xl:text-lg flex">
 
     <header class="absolute top-0 inset-x-0 w-full bg-gradient-to-b from-violet-500 " ref="headerRef">
 
