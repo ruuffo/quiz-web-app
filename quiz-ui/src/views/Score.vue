@@ -1,9 +1,6 @@
 <template>
-  <h1 class=" font-question font-bold text-4xl text-center">{{ playerName }}, your score is {{ lastScore }} / {{ totalNumberOfQuestion }}</h1>
-
-
-
-
+  <h1 class=" font-question font-bold text-4xl text-center">{{ playerName }}, your score is {{ lastScore }} / {{
+    totalNumberOfQuestion }}</h1>
 </template>
 
 <script>

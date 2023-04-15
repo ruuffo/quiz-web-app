@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h1></h1>
     <p class=" text-slate-200 ">Le site que nous
       avons développé est un projet de quiz destiné aux fans des films du célèbre studio Ghibli. En utilisant une
       interface simple et conviviale, les utilisateurs peuvent tester leurs connaissances sur les films de Ghibli en

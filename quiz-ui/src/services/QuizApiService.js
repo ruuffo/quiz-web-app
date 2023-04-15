@@ -2,7 +2,7 @@ import axios from "axios";
 
 const instance = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL}`,
-  json: true
+  json: true,
 });
 
 export default {
@@ -37,9 +37,13 @@ export default {
   },
   postParticipation(playerName, answers) {
     let answer = {
-      "playerName": playerName,
-      "answers": answers
-    }
-   return this.call("post", "participations", answer);
-  }
+      playerName: playerName,
+      answers: answers,
+    };
+    return this.call("post", "participations", answer);
+  },
+  login(username, password) {
+
+    return instance.post("/login", { username, password });
+  },
 };
