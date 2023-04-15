@@ -40,6 +40,6 @@ export default {
       "playerName": playerName,
       "answers": answers
     }
-    return this.call("post", "participations", answer);
+   return this.call("post", "participations", answer);
   }
 };

@@ -5,7 +5,7 @@ import './assets/main.css'
 
 <template>
   <div style="text-shadow: 5px 5px 5px black, 0 0 0.2em black, 0 0 3em black; "
-    class=" bg-gif h-screen bg-cover text-slate-200 font-body flex">
+    class=" bg-gif h-screen bg-cover text-slate-200 font-body sm:text-sm md:text-md lg:text-lg xl:text-xl 2xl:text-2xl flex">
 
     <header class="absolute top-0 inset-x-0 w-full bg-gradient-to-b from-violet-500 " ref="headerRef">
 
@@ -18,6 +18,8 @@ import './assets/main.css'
           </RouterLink>
           <RouterLink to="/about" class="hover:bg-violet-400 hover:transition-all hover:rounded p-2 hover:text-shadow-none">
             About</RouterLink>
+  <RouterLink to="/admin" class="hover:bg-violet-400 hover:transition-all hover:rounded p-2 hover:text-shadow-none">
+            Admin</RouterLink>
         </nav>
       </div>
     </header>
