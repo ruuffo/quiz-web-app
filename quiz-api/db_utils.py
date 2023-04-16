@@ -1,8 +1,10 @@
-import sqlite3
-from flask import request, Flask, g, Response
 import os
-from question import *
+import sqlite3
+
+from flask import Flask, Response, g, request
+
 from answer import *
+from question import *
 
 DATABASE_PATH = os.path.join(os.path.dirname(
     os.path.abspath(__file__)), 'quiz-bdd.db')
@@ -24,24 +26,26 @@ def get_quiz_info():
     nb_questions = cursor.fetchone()[0]
     cursor.execute("SELECT DISTINCT playerName FROM participations")
     participants = cursor.fetchall()
-    scores=[]
+    scores = []
 
     for participant in participants:
-        score_participant=0
+        score_participant = 0
         playerName = participant[0]
-        cursor.execute("SELECT answers,question_position FROM participations WHERE playerName = ?",(playerName,))
+        cursor.execute(
+            "SELECT answers,question_position FROM participations WHERE playerName = ?", (playerName,))
         participations = cursor.fetchall()
         for participation in participations:
             answer = participation[0]
             question_position = participation[1]
-            question = Question.from_json(get_question_by_position(question_position))
-            for i in range(0,len(question.possibleAnswers)):
+            question = Question.from_json(
+                get_question_by_position(question_position))
+            for i in range(0, len(question.possibleAnswers)):
                 if question.possibleAnswers[i]["isCorrect"] == True:
-                    idx_correct_answer =i+1
+                    idx_correct_answer = i+1
                     break
             if answer == idx_correct_answer:
-                score_participant+=1
-        scores.append({"playerName":playerName,"score":score_participant})
+                score_participant += 1
+        scores.append({"playerName": playerName, "score": score_participant})
     sorted_scores = sorted(scores, key=lambda x: x["score"], reverse=True)
     return {"size": nb_questions, "scores": sorted_scores}, 200
 
@@ -91,7 +95,7 @@ def add_question():
                 sql_insert_answer, ps)
             idx_answer += 1
         connection.commit()
-        return {'id': question_id},200
+        return {'id': question_id}, 200
 
     except sqlite3.Error as e:
         connection.rollback()
@@ -225,15 +229,14 @@ def register_participation():
         for i in range(0, len(data["answers"])):
 
             cursor.execute(
-                "INSERT INTO participations (playerName,answers,question_position) VALUES (?,?,?)",(data["playerName"],data["answers"][i],i+1))
+                "INSERT INTO participations (playerName,answers,question_position) VALUES (?,?,?)", (data["playerName"], data["answers"][i], i+1))
 
-        scores=get_quiz_info()[0]['scores']
+        scores = get_quiz_info()[0]['scores']
         for player in scores:
-            if player["playerName"]==data["playerName"]:
-                score_participant= player['score']
+            if player["playerName"] == data["playerName"]:
+                score_participant = player['score']
                 break
-        return {"score":score_participant,"playerName":data["playerName"]},200
-
+        return {"score": score_participant, "playerName": data["playerName"]}, 200
 
     except sqlite3.Error as e:
         return Response(f"An error occurred: {e}", status=500)
@@ -335,6 +338,21 @@ def delete_question(id: int):
     except sqlite3.Error as e:
 
         return Response(response=f"An error occurred: {e}", status=500)
+
+
+def get_all_questions():
+    connection = connect_to_database()
+    try:
+        cursor = connection.cursor()
+        cursor.execute("SELECT position,title FROM questions")
+        questions_data = cursor.fetchall()
+        questions_list = []
+        for row in questions_data:
+            question = {"title": row[1],"position":row[0]}
+            questions_list.append(question)
+        return {"listAllQuestions": questions_list}, 200
+    except sqlite3.Error as e:
+        return {f"An error occurred: {e}", 500}
 
 
 @app.teardown_appcontext

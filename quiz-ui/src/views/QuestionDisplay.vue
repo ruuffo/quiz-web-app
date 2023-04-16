@@ -8,7 +8,7 @@
     <div>
 
       <img v-if="question.image" :src="question.image"
-        class=" m-3 xl:max-h-xl xl:max-w-xl md:max-h-md sm:max-h-sm rounded shadow-md shadow-black lg:max-w-lg md:max-w-md sm:max-w-smlg:max-h-72" />
+        class=" m-3 xl:max-h-xl xl:max-w-xl md:max-h-md sm:max-h-sm rounded shadow-md shadow-black lg:max-w-lg md:max-w-md sm:max-w-sm lg:max-h-72" />
     </div>
 
     <div class="grid grid-cols-2 gap-2 w-full">

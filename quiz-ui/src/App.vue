@@ -20,14 +20,16 @@ import './assets/main.css'
           <RouterLink to="/about"
             class="hover:bg-violet-400 hover:transition-all hover:rounded p-2 hover:text-shadow-none">
             About</RouterLink>
-          <RouterLink to="/login"
+          <RouterLink to="/admin"
             class="hover:bg-violet-400 hover:transition-all hover:rounded p-2 hover:text-shadow-none">
-            Admin</RouterLink>
+            Log in</RouterLink>
         </nav>
       </div>
     </header>
-    <div :style="{ marginTop: headerHeight + 'px' }" class="flex w-50 container justify-center">
-      <RouterView />
+    <div class="w-full bg-slate-900 bg-opacity-20" :style="{ marginTop: headerHeight + 'px' }">
+      <div class="flex  container h-full">
+        <RouterView />
+      </div>
     </div>
   </div>
 </template>

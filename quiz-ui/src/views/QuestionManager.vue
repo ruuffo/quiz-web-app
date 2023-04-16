@@ -6,9 +6,9 @@
 </template>
 
 <script>
-import QuestionDisplay from "./QuestionDisplay.vue";
 import participationStorageService from "@/services/ParticipationStorageService";
 import quizApiService from "@/services/QuizApiService";
+import QuestionDisplay from "./QuestionDisplay.vue";
 
 export default {
   name: "QuestionsManager",

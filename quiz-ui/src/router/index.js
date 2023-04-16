@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "../views/HomePage.vue";
 function requireAuth(to, from, next) {
-  const isAuthenticated = localStorage.getItem("AuthToken");
+  const isAuthenticated = localStorage.getItem("token");
   if (isAuthenticated) {
     next();
   } else {
@@ -27,7 +27,8 @@ const router = createRouter({
     {
       path: "/admin",
       name: "AdminPage",
-      component: () => import("../views/AdminPage.vue"),
+      component: () => import("../views/AdminController.vue"),
+      beforeEnter: requireAuth,
     },
     {
       path: "/start-new-quiz-page",

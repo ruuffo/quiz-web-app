@@ -27,6 +27,7 @@ class Question:
     def from_dict(cls, data):
         return cls(_id=data["id"],position=data["position"], title=data["title"], text=data["text"], image=data["image"], possibleAnswers=data["possibleAnswers"])
 
+
     @classmethod
     def from_json(cls, json_data):
         return cls.from_dict(json.loads(json_data))

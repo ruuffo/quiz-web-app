@@ -14,7 +14,4 @@ export default {
   getParticipationScore() {
     return window.localStorage.getItem("score");
   },
-  saveToken(token) {
-    window.localStorage.setItem("token", token);
-  },
 };

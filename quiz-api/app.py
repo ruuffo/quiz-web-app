@@ -1,14 +1,31 @@
 from flask import Flask, request
 from flask_cors import CORS
-import jwt_utils
-import db_utils
-
 from werkzeug.exceptions import Unauthorized
 
+import db_utils
+import jwt_utils
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:3000", "supports_credentials": True}})
 # app.config['CORS_HEADERS'] = 'Content-Type'
+
+def authentification():
+    auth_header = request.headers.get('Authorization')
+    if auth_header is None:
+        print("auth_header is None")
+        return 'Unauthorized', 401
+
+    auth_type, auth_token = auth_header.split()
+    if auth_type != 'Bearer':
+        print("auth_type != Bearer")
+        return 'Unauthorized', 401
+
+    try:
+        jwt_utils.decode_token(auth_token)
+    except Exception as e:
+        print("error",e)
+        return f'Unauthorized: {e}', 401
+
 
 @app.route('/')
 def hello_world():
@@ -71,6 +88,12 @@ def delete_all_questions():
         return retour_auth
     return db_utils.delete_all_questions()
 
+@app.route('/questions/all', methods=['GET'])
+def get_all_questions():
+    retour_auth = authentification()
+    if retour_auth != None:
+        return retour_auth
+    return db_utils.get_all_questions()
 
 @app.route('/participations/all', methods=['DELETE'])
 def delete_all_participations():
@@ -92,19 +115,6 @@ def register_participation():
 
 
 
-def authentification():
-    auth_header = request.headers.get('Authorization')
-    if auth_header is None:
-        return 'Unauthorized', 401
-
-    auth_type, auth_token = auth_header.split()
-    if auth_type != 'Bearer':
-        return 'Unauthorized', 401
-
-    try:
-        jwt_utils.decode_token(auth_token)
-    except jwt_utils.TokenError:
-        return 'Unauthorized', 401
 
 
 if __name__ == "__main__":
