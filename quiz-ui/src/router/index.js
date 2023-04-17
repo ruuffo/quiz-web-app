@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomePage from "../views/HomePage.vue";
+import HomePage from "@/views/HomePage.vue";
 function requireAuth(to, from, next) {
   const isAuthenticated = localStorage.getItem("token");
   if (isAuthenticated) {

@@ -1,34 +1,24 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import './assets/main.css'
+import { RouterView } from 'vue-router';
+import './assets/main.css';
+import Navbar from './components/Navbar.vue';
 </script>
 
 <template>
   <div style="text-shadow: 5px 5px 5px black, 0 0 0.2em black, 0 0 3em black; "
-    class=" bg-gif h-screen bg-cover text-slate-200 font-body sm:text-md md:text-md lg:text-lg xl:text-lg 2xl:text-lg flex">
+    class=" bg-gif h-screen bg-cover text-slate-200 font-body sm:text-md md:text-md lg:text-lg xl:text-lg 2xl:text-lg flex flex-col flex-nowrap">
+    <div class=" h-24">
+      <Navbar />
+    </div>
+    <div class="bg-slate-900 bg-opacity-20 h-full w-full flex flex-row">
+  <div class=" basis-1/4">
 
-    <header class="absolute top-0 inset-x-0 w-full bg-gradient-to-b from-violet-500 " ref="headerRef">
-
-      <div class=" flex flex-shrink  ">
-
-        <nav class=" flex items-center font-extralight p-6 lg:px-5 space-x-3" aria-label="Global">
-          <div class="flex "><img src="../public/Pin_Totoro.webp" class="h-12" /></div>
-          <RouterLink to="/"
-            class="hover:bg-violet-400 hover:rounded p-2 hover:shadow-md hover:shadow-black hover:text-shadow-none">
-            Home
-          </RouterLink>
-          <RouterLink to="/about"
-            class="hover:bg-violet-400 hover:transition-all hover:rounded p-2 hover:text-shadow-none">
-            About</RouterLink>
-          <RouterLink to="/admin"
-            class="hover:bg-violet-400 hover:transition-all hover:rounded p-2 hover:text-shadow-none">
-            Log in</RouterLink>
-        </nav>
       </div>
-    </header>
-    <div class="w-full bg-slate-900 bg-opacity-20" :style="{ marginTop: headerHeight + 'px' }">
-      <div class="flex  container h-full">
+      <div class=" basis-1/2">
         <RouterView />
+      </div>
+  <div class=" basis-1/4">
+
       </div>
     </div>
   </div>
@@ -44,6 +34,9 @@ export default {
   mounted() {
     this.headerHeight = this.$refs.headerRef.offsetHeight;
   },
+  components: {
+    Navbar
+  }
 };
 
 </script>
