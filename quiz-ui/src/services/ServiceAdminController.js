@@ -11,4 +11,10 @@ export default {
     window.localStorage.removeItem("token");
     router.push("/login");
   },
+  setCurrentQuestionPosition(currentQuestion) {
+    window.localStorage.setItem("currentQuestion", currentQuestion);
+  },
+  getCurrentQuestionPosition() {
+    return window.localStorage.getItem("currentQuestion");
+  },
 };

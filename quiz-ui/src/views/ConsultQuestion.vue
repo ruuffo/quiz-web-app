@@ -1,6 +1,6 @@
 <template>
   <div class="grid justify-items-center place-content-center">
-    <h1>Test</h1>
+
     <h1 class=" font-question font-bold sm:text-sm md:text-md lg:text-lg xl:text-xl md:text-md">{{ question.title }}</h1>
     <div class="lg:w-75 md:w-100 sm:w-100 sm:text-xl">
       <h3 class=" lg:text-3xl md:text-2xl font-question font-bold text-center xl:text-3xl">{{ question.text }}</h3>
@@ -27,26 +27,18 @@
 
 <script>
 import "../assets/main.css";
+import QuizApiService from "../services/QuizApiService";
+import ServiceAdminController from "../services/ServiceAdminController";
 export default {
-  mounted() {
-    console.log('Question: ', this.question)
-
+  data() {
+    return { question: {} }
   },
-  name: "QuestionDisplay",
-  emits: ["answer-selected"],
-  props: {
-    question: {
-      type: Object,
-      required: true
-    }
-  },
+  async created() { this.loadQuestion() },
+  methods: {
+    async loadQuestion() {
+      var response = QuizApiService.getQuestion(ServiceAdminController.getCurrentQuestionPosition())
+      this.question = (await response).data
+    },
+  }
 };
 </script>
-
-
-<style>
-.img-thumbnail {
-  max-height: 250px;
-  max-width: 500px;
-}
-</style>

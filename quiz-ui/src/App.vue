@@ -10,30 +10,14 @@ import Navbar from './components/Navbar.vue';
     <div class=" h-24">
       <Navbar />
     </div>
-    <div class="bg-slate-900 bg-opacity-20 h-full w-full flex flex-row">
-  <div class=" basis-1/4">
-
-      </div>
-      <div class=" basis-1/2">
-        <RouterView />
-      </div>
-  <div class=" basis-1/4">
-
-      </div>
+    <div class="bg-slate-900 bg-opacity-20 h-full w-full flex flex-row container">
+      <RouterView />
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      headerHeight: 0,
-    };
-  },
-  mounted() {
-    this.headerHeight = this.$refs.headerRef.offsetHeight;
-  },
   components: {
     Navbar
   }

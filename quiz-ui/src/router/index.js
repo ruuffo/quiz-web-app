@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from "vue-router";
 import HomePage from "@/views/HomePage.vue";
+import { createRouter, createWebHistory } from "vue-router";
 function requireAuth(to, from, next) {
   const isAuthenticated = localStorage.getItem("token");
   if (isAuthenticated) {
@@ -27,8 +27,31 @@ const router = createRouter({
     {
       path: "/admin",
       name: "AdminPage",
+      beforeRouteEnter(to, from, next) {
+        if (to.matched.length === 1) {
+          next({ name: "default" });
+        } else {
+          next();
+        }
+      },
       component: () => import("../views/AdminController.vue"),
       beforeEnter: requireAuth,
+      children: [
+        {
+          path: "",
+          name: "default",
+          component: () => import("../views/AdminPage.vue"),
+        },
+        {
+          path: "/consultQuestion",
+          name: "consultQuestion",
+          component: () => import("../views/ConsultQuestion.vue"),
+        },  {
+          path: "/editQuestion",
+          name: "editQuestion",
+          component: () => import("../views/EditQuestion.vue"),
+        },
+      ],
     },
     {
       path: "/start-new-quiz-page",
