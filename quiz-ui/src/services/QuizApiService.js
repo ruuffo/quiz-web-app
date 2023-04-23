@@ -42,7 +42,6 @@ export default {
   },
   async editQuestion(question) {
     const vQuestion = JSON.parse(question);
-    console.log("vQuestion.id : ", vQuestion.id);
     const response = await instance.put(
       "/questions/" + vQuestion.id,
       question,

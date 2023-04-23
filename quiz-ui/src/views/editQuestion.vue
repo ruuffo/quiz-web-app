@@ -26,12 +26,17 @@
     <h1 class="text-left text-lg justify-self-start">Possible Answers:</h1>
     <div class="grid grid-cols-2 gap-2 w-full">
       <div
-        v-for="(possibleAnswer, index) in question.possibleAnswers"
-        class="p-2 text-center btn bg-rose-500 opacity-90 hover:bg-rose-300 hover:transition-all flex gap-1"
+        v-for="(possibleAnswer, index) in this.possibleAnswers"
+        class="p-2 text-center btn bg-rose-500 opacity-90 hover:bg-rose-300 hover:transition-all flex flex-row gap-1"
         style="text-shadow: none"
       >
-        <input type="radio" class="relative float-left rounded h-5 w-5"
-        v-model="possibleAnswer.isCorrect" name="answers" />
+        <input
+          type="radio"
+          class="relative float-left rounded h-5 w-5"
+          :checked="possibleAnswer.isCorrect"
+          v-model="possibleAnswer.isCorrect"
+          name="answers"
+        />
         <input
           type="text"
           class="text-md text-black p-1 rounded shadow bg-slate-200 w-100 whitespace-normal"
@@ -53,7 +58,7 @@ import QuizApiService from "../services/QuizApiService";
 import ServiceAdminController from "../services/ServiceAdminController";
 export default {
   data() {
-    return { question: {}, nbQuestions: 0 };
+    return { question: {}, possibleAnswers: [], nbQuestions: 0 };
   },
   async created() {
     this.loadQuestion();
@@ -67,13 +72,32 @@ export default {
         ServiceAdminController.getCurrentQuestionPosition()
       );
       this.question = (await response).data;
-      console.log(this.question);
+
+      this.possibleAnswers = this.question.possibleAnswers;
     },
     editQuestion() {
+      this.possibleAnswers.forEach((answer) => {
+        if (answer.isCorrect === "on") {
+          answer.isCorrect = true;
+        } else {
+          answer.isCorrect = false;
+        }
+      });
+      this.question.possibleAnswers = this.possibleAnswers;
       QuizApiService.editQuestion(JSON.stringify(this.question)).then(() => {
         this.$router.go(-1);
       });
     },
   },
 };
+export class Answer {
+  text = "";
+  isCorrect = "";
+  constructor(te, ic) {
+    if (te == null) this.text = "";
+    else this.text = te;
+    if (ic == null) this.isCorrect = false;
+    else this.isCorrect = ic;
+  }
+}
 </script>

@@ -76,7 +76,7 @@ export default {
       ServiceAdminController.signOut();
     },
     goBack() {
-      this.$router.go(-1); 
+      this.$router.go(-1);
     },
     editQuestion() {
       this.$router.push("editQuestion");
@@ -88,7 +88,6 @@ export default {
       this.dialogBoxConfirmRemoveQuestionIsVisible = true;
     },
     deleteQuestion() {
-      console.log("removed");
       var id = ServiceAdminController.getCurrentQuestionId();
 
       QuizApiService.deleteQuestion(id);

@@ -10,9 +10,9 @@ import ServiceAdminController from "../services/ServiceAdminController";
   <div class="bg-slate-950 bg-opacity-40 p-2 card shadow rounded-lg">
     <div class="overflow-y-auto scroll-m-1 overflow-x-hidden max-h-96">
       <table class="table text-white w-full text-sm divide-slate-800">
-        <thead class="sticky top-0">
+        <thead class="sticky top-0 ">
           <tr
-            class="border-b-2 border-slate-800 sticky-top bg-blend-hard-light"
+            class="border-b-2 border-slate-800 sticky top-0 z-10 bg-blend-hard-light"
           >
             <th scope="col" class="text-lg">Position</th>
             <th scope="col" class="text-lg">Titre</th>

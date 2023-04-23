@@ -56,7 +56,6 @@ export default {
         ServiceAdminController.saveToken(token)
         this.$router.push('/admin')
       }).catch(error => {
-        console.log(error)
         this.errorMessage = "Mot de passe invalide"
       })
     }
