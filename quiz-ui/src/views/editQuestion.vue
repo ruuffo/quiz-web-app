@@ -22,6 +22,7 @@
         :src="question.image"
         class="m-3 xl:max-h-xl xl:max-w-xl md:max-h-md sm:max-h-sm rounded shadow-md shadow-black lg:max-w-lg md:max-w-md sm:max-w-sm lg:max-h-72"
       />
+      <ImageUpload @file-change="imageFileChangedHandler" />
     </div>
     <h1 class="text-left text-lg justify-self-start">Possible Answers:</h1>
     <div class="grid grid-cols-2 gap-2 w-full">
@@ -54,12 +55,14 @@
 
 <script>
 import "../assets/main.css";
+import ImageUpload from "../components/ImageUpload.vue";
 import QuizApiService from "../services/QuizApiService";
 import ServiceAdminController from "../services/ServiceAdminController";
 export default {
   data() {
     return { question: {}, possibleAnswers: [], nbQuestions: 0 };
   },
+  components: { ImageUpload },
   async created() {
     this.loadQuestion();
   },
@@ -88,16 +91,10 @@ export default {
         this.$router.go(-1);
       });
     },
+
+    imageFileChangedHandler(b64String) {
+      this.question.image = b64String;
+    },
   },
 };
-export class Answer {
-  text = "";
-  isCorrect = "";
-  constructor(te, ic) {
-    if (te == null) this.text = "";
-    else this.text = te;
-    if (ic == null) this.isCorrect = false;
-    else this.isCorrect = ic;
-  }
-}
 </script>
