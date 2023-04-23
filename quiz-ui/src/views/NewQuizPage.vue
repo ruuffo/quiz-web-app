@@ -22,6 +22,7 @@
 </template>
 
 <script>
+
 import participationStorageService from "@/services/ParticipationStorageService";
 import "../assets/main.css"
 export default {

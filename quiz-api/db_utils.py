@@ -344,11 +344,11 @@ def get_all_questions():
     connection = connect_to_database()
     try:
         cursor = connection.cursor()
-        cursor.execute("SELECT position,title FROM questions")
+        cursor.execute("SELECT position,title,id FROM questions")
         questions_data = cursor.fetchall()
         questions_list = []
         for row in questions_data:
-            question = {"title": row[1],"position":row[0]}
+            question = {"title": row[1], "position": row[0], "id": row[2]}
             questions_list.append(question)
         return {"listAllQuestions": questions_list}, 200
     except sqlite3.Error as e:

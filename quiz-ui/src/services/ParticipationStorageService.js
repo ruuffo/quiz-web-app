@@ -14,4 +14,5 @@ export default {
   getParticipationScore() {
     return window.localStorage.getItem("score");
   },
+
 };

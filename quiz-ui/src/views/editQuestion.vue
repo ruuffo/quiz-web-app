@@ -1,28 +1,50 @@
 <template>
-  <div class="grid justify-items-center place-content-center">
-<h1>Edit</h1>
-    <h1 class=" font-question font-bold sm:text-sm md:text-md lg:text-lg xl:text-xl md:text-md">{{ question.title }}</h1>
-    <div class="lg:w-75 md:w-100 sm:w-100 sm:text-xl">
-      <h3 class=" lg:text-3xl md:text-2xl font-question font-bold text-center xl:text-3xl">{{ question.text }}</h3>
-    </div>
+  <form @submit.prevent="editQuestion">
+    <label for="questiontitle">Title</label>
+    <input
+      name="questiontitle"
+      type="text"
+      class="text-md text-black p-1 rounded shadow bg-slate-200 w-100 whitespace-normal"
+      v-model="question.title"
+    />
+
+    <label for="questiontext">Text</label>
+    <input
+      name="questiontext"
+      type="text"
+      class="text-md text-black p-1 rounded shadow bg-slate-200 w-100 whitespace-normal"
+      v-model="question.text"
+    />
+
     <div>
-
-      <img v-if="question.image" :src="question.image"
-        class=" m-3 xl:max-h-xl xl:max-w-xl md:max-h-md sm:max-h-sm rounded shadow-md shadow-black lg:max-w-lg md:max-w-md sm:max-w-sm lg:max-h-72" />
+      <img
+        v-if="question.image"
+        :src="question.image"
+        class="m-3 xl:max-h-xl xl:max-w-xl md:max-h-md sm:max-h-sm rounded shadow-md shadow-black lg:max-w-lg md:max-w-md sm:max-w-sm lg:max-h-72"
+      />
     </div>
-
+    <h1 class="text-left text-lg justify-self-start">Possible Answers:</h1>
     <div class="grid grid-cols-2 gap-2 w-full">
-      <div v-for="(possibleAnswer, index) in question.possibleAnswers"
-        class="p-2 text-center btn bg-rose-500 opacity-90 hover:bg-rose-300 hover:transition-all"
-        style="text-shadow: none;">
-
-        <a @click="$emit('answer-selected', index)"
-          class=" font-bold w-full h-full sm:text-sm md:text-md lg:text-lg xl:text-xl inline-block font-question hover:no-underline hover:bg-transparent hover:text-current">{{
-            possibleAnswer.text }}</a>
-
+      <div
+        v-for="(possibleAnswer, index) in question.possibleAnswers"
+        class="p-2 text-center btn bg-rose-500 opacity-90 hover:bg-rose-300 hover:transition-all flex gap-1"
+        style="text-shadow: none"
+      >
+        <input type="radio" class="relative float-left rounded h-5 w-5"
+        v-model="possibleAnswer.isCorrect" name="answers" />
+        <input
+          type="text"
+          class="text-md text-black p-1 rounded shadow bg-slate-200 w-100 whitespace-normal"
+          v-model="possibleAnswer.text"
+        />
       </div>
     </div>
-  </div>
+    <label for="position">position</label>
+    <select name="position" class="text-black" v-model="question.position">
+      <option v-for="i in this.nbQuestions" :value="i">{{ i }}</option>
+    </select>
+    <input type="submit" class="btn text-white bg-blue-500" value="Save" />
+  </form>
 </template>
 
 <script>
@@ -31,14 +53,27 @@ import QuizApiService from "../services/QuizApiService";
 import ServiceAdminController from "../services/ServiceAdminController";
 export default {
   data() {
-    return { question: {} }
+    return { question: {}, nbQuestions: 0 };
   },
-  async created() { this.loadQuestion() },
+  async created() {
+    this.loadQuestion();
+  },
+  async mounted() {
+    this.nbQuestions = Number(ServiceAdminController.getNbQuestions());
+  },
   methods: {
     async loadQuestion() {
-      var response = QuizApiService.getQuestion(ServiceAdminController.getCurrentQuestionPosition())
-      this.question = (await response).data
+      var response = QuizApiService.getQuestion(
+        ServiceAdminController.getCurrentQuestionPosition()
+      );
+      this.question = (await response).data;
+      console.log(this.question);
     },
-  }
+    editQuestion() {
+      QuizApiService.editQuestion(JSON.stringify(this.question)).then(() => {
+        this.$router.go(-1);
+      });
+    },
+  },
 };
 </script>

@@ -17,4 +17,16 @@ export default {
   getCurrentQuestionPosition() {
     return window.localStorage.getItem("currentQuestion");
   },
+  setCurrentQuestionId(currentQuestionId) {
+    window.localStorage.setItem("currentQuestionId", currentQuestionId);
+  },
+  getCurrentQuestionId() {
+    return window.localStorage.getItem("currentQuestionId");
+  },
+  saveNbQuestions(nbQuestions) {
+    window.localStorage.setItem("nbQuestions", nbQuestions);
+  },
+  getNbQuestions() {
+    return window.localStorage.getItem("nbQuestions");
+  },
 };

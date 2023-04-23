@@ -1,60 +1,116 @@
 <script setup>
-import '../assets/main.css';
-import QuizApiService from '../services/QuizApiService';
-import '../services/ServiceAdminController';
-import ServiceAdminController from '../services/ServiceAdminController';
-import QuestionDisplay from './QuestionDisplay.vue';
+import "../assets/main.css";
+import Dialog from "../components/Dialog.vue";
+import QuizApiService from "../services/QuizApiService";
+import "../services/ServiceAdminController";
+import ServiceAdminController from "../services/ServiceAdminController";
 </script>
-
 <template>
-  <h1 class=" text-xl my-3">Liste des questions</h1>
-  <div class=" bg-slate-800 bg-opacity-40 p-2 card shadow rounded-lg">
-    <table class="table-auto table text-white w-full text-sm">
-      <thead class=" border-b dark:border-neutral-600 sticky top-0 ">
-        <tr>
-          <th scope="col" class=" text-lg">Position</th>
-          <th scope="col" class=" text-lg">Titre</th>
-          <th scope="col" class=" text-lg">Actions disponibles</th>
-        </tr>
-      </thead>
-      <tbody class="divide-y">
-        <tr v-for="q in  listQuestion ">
-          <td class=" font-bold font-question"> {{ q.position }}</td>
-          <td> {{ q.title }}</td>
-          <td>
-            <button @click.prevent="consultQuestion(q.position)">Details</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <h1 class="text-xl my-3">Liste des questions</h1>
+  <div class="bg-slate-950 bg-opacity-40 p-2 card shadow rounded-lg">
+    <div class="overflow-y-auto scroll-m-1 overflow-x-hidden max-h-96">
+      <table class="table text-white w-full text-sm divide-slate-800">
+        <thead class="sticky top-0">
+          <tr
+            class="border-b-2 border-slate-800 sticky-top bg-blend-hard-light"
+          >
+            <th scope="col" class="text-lg">Position</th>
+            <th scope="col" class="text-lg">Titre</th>
+          </tr>
+        </thead>
+        <tbody class="overflow-y-auto scroll-m-1 overflow-x-hidden max-h-96">
+          <tr>
+            <td colspan="3">
+              <div class="flex flex-row gap-2">
+                <button class="bg-blue-500 btn">Add question</button>
+                <button
+                  @click="displayDialogBoxConfirmRemoveAllQuestions"
+                  class="bg-blue-500 btn"
+                >
+                  Remove all questions
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr
+            v-for="q in listQuestion"
+            :key="q.id"
+            v-if="listQuestion.length != 0"
+          >
+            <td class="font-bold font-question">{{ q.position }}</td>
+            <td>{{ q.title }}</td>
+            <td>
+              <div class="flex flex-row gap-2">
+                <button
+                  @click.prevent="consultQuestion(q.position, q.id)"
+                  class="bg-amber-800 p-1 rounded"
+                >
+                  Details
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr v-else>
+            <td colspan="3">
+              <p class="text-center text-xl">
+                There is no questions in the quiz yet.
+              </p>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+  <Dialog
+    :show="this.dialogBoxConfirmRemoveAllQuestionsIsVisible"
+    :cancel="undisplayDialogBoxConfirmRemoveAllQuestions"
+    title="Warning!"
+    description="Do you really want to delete all questions?"
+    confirmtext="Yes, remove all questions"
+    :confirm="removeAllQuestions"
+  />
 </template>
 <script>
 export default {
   data() {
     return {
       listQuestion: [],
-      question: {}
+      dialogBoxConfirmRemoveAllQuestionsIsVisible: false,
     };
   },
+  components: { Dialog },
   async created() {
-    QuizApiService.getAllQuestion().then(response => {
-      console.log(response)
-      this.listQuestion = response.data.listAllQuestions
-    });
+    this.loadQuestionList();
+  },
+  async mounted() {
+    this.loadQuestionList();
   },
   methods: {
-    signOut() {
-      ServiceAdminController.signOut()
+    consultQuestion(position, id) {
+      ServiceAdminController.setCurrentQuestionPosition(position);
+      ServiceAdminController.setCurrentQuestionId(id);
+      ServiceAdminController.saveNbQuestions(this.listQuestion.length);
+      this.$router.push("/consultQuestion");
     },
-    consultQuestion(position) {
-      console.log("position consult question ? ", position)
-      ServiceAdminController.setCurrentQuestionPosition(position)
-      this.$router.push("/consultQuestion")
-    }
+
+    undisplayDialogBoxConfirmRemoveAllQuestions() {
+      this.dialogBoxConfirmRemoveAllQuestionsIsVisible = false;
+    },
+    displayDialogBoxConfirmRemoveAllQuestions() {
+      this.dialogBoxConfirmRemoveAllQuestionsIsVisible = true;
+    },
+    loadQuestionList() {
+      QuizApiService.getAllQuestion().then((response) => {
+        this.listQuestion = response.data.listAllQuestions.sort((a, b) =>
+          a.position > b.position ? 1 : -1
+        );
+      });
+    },
+    removeAllQuestions() {
+      QuizApiService.deleteAllQuestions();
+      this.undisplayDialogBoxConfirmRemoveAllQuestions();
+      this.loadQuestionList();
+    },
   },
-  components: {
-    QuestionDisplay
-  }
-}
+};
 </script>
