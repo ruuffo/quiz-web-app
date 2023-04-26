@@ -12,7 +12,7 @@ import ServiceAdminController from "../services/ServiceAdminController";
       <table class="table text-white w-full text-sm divide-slate-800">
         <thead class="sticky top-0">
           <tr
-            class="border-b-2 border-slate-800 sticky top-0 z-10 bg-blend-hard-light"
+            class="border-b-2 border-slate-800 sticky top-0 z-10"
           >
             <th scope="col" class="text-lg">Position</th>
             <th scope="col" class="text-lg">Titre</th>
@@ -22,7 +22,9 @@ import ServiceAdminController from "../services/ServiceAdminController";
           <tr>
             <td colspan="3">
               <div class="flex flex-row gap-2">
-                <button class="bg-blue-500 btn">Add question</button>
+                <button @click="goToAddQuestion" class="bg-blue-500 btn">
+                  Add question
+                </button>
                 <button
                   @click="displayDialogBoxConfirmRemoveAllQuestions"
                   class="bg-blue-500 btn"
@@ -110,6 +112,9 @@ export default {
       QuizApiService.deleteAllQuestions();
       this.undisplayDialogBoxConfirmRemoveAllQuestions();
       this.loadQuestionList();
+    },
+    goToAddQuestion() {
+      this.$router.push("/addQuestion");
     },
   },
 };

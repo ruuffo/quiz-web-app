@@ -157,33 +157,6 @@ def get_question_by_id(id: int):
     return question.to_json()
 
 
-# def set_question_at_position(id: int):
-
-#     connection = connect_to_database()
-#     cursor = connection.cursor()
-#  # Récupérer les données de la requête
-#     data = request.get_json()
-
-#     new_position=data["position"]
-
-#     # Si la nouvelle position est inférieure à la position actuelle, décaler les questions entre la nouvelle position et la position actuelle d'une position vers le bas
-#     if new_position < current_position:
-#         cursor.execute(
-#             "UPDATE questions SET position = position + 1 WHERE position >= ? AND position < ?", (new_position, current_position))
-#     # Si la nouvelle position est supérieure à la position actuelle, décaler les questions entre la position actuelle et la nouvelle position d'une position vers le haut
-#     elif new_position > current_position:
-#         cursor.execute(
-#             "UPDATE questions SET position = position - 1 WHERE position > ? AND position <= ?", (current_position, new_position))
-#     connection.commit()
-
-#     # Mettre à jour la position de la question
-#     cursor.execute(
-#         "UPDATE questions SET position=? WHERE id=?", (new_position, id))
-#     connection.commit()
-
-#     # Retourner un code de réussite
-#     return Response(status=200)
-
 
 def rebuild_db():
     try:

@@ -8,12 +8,13 @@ instance.interceptors.request.use((config) => {
   const token = ServiceAdminController.getToken();
   if (token) {
     config.headers.Authorization = "Bearer " + token;
+    config.headers["Content-Type"] = "application/json";
   }
   return config;
 });
 export default {
   getQuizInfo() {
-    return instance.get("/quiz-info");
+    return instance.get("quiz-info", { withCredentials: true });
   },
   getQuestion(position) {
     return instance.get("questions?position=" + position);
@@ -40,17 +41,15 @@ export default {
   deleteAllQuestions() {
     return instance.delete("/questions/all", { withCredentials: true });
   },
+  addQuestion(question) {
+    return instance.post("/questions", question, { withCredentials: true });
+  },
   async editQuestion(question) {
     const vQuestion = JSON.parse(question);
     const response = await instance.put(
       "/questions/" + vQuestion.id,
       question,
-      {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { withCredentials: true }
     );
     return response;
   },

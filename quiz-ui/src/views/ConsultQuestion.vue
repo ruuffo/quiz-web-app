@@ -1,5 +1,5 @@
 <template>
-  <div class="grid justify-items-center place-content-center">
+  <disv class="grid justify-items-center place-content-center">
     <h1
       class="font-question font-bold sm:text-sm md:text-md lg:text-lg xl:text-xl md:text-md"
     >
@@ -23,9 +23,10 @@
     <div class="grid grid-cols-2 gap-2 w-full">
       <div
         v-for="(possibleAnswer, index) in question.possibleAnswers"
-        class="p-2 text-center btn bg-rose-500 opacity-90 hover:bg-rose-300 hover:transition-all"
+        class="p-2 text-center btn bg-rose-500 opacity-90 hover:bg-rose-300 hover:transition-all flex flex-row justify-center"
         style="text-shadow: none"
       >
+     <img v-if="possibleAnswer.isCorrect" src="../assets/img/accept.png" width="23" height="30"/>
         <a
           @click="$emit('answer-selected', index)"
           class="font-bold w-full h-full sm:text-sm md:text-md lg:text-lg xl:text-xl inline-block font-question hover:no-underline hover:bg-transparent hover:text-current"
@@ -33,7 +34,12 @@
         >
       </div>
     </div>
-  </div>
+    <h1
+      class="font-question font-bold sm:text-sm md:text-md lg:text-lg xl:text-xl md:text-md my-3"
+    >
+      Position: {{ question.position }}
+    </h1>
+  </disv>
 </template>
 
 <script>

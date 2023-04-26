@@ -1,11 +1,12 @@
 <template>
-  <form @submit.prevent="editQuestion">
+  <form @submit.prevent="addQuestion">
     <label for="questiontitle">Title</label>
     <input
       name="questiontitle"
       type="text"
       class="text-md text-black p-1 rounded shadow bg-slate-200 w-100 whitespace-normal"
       v-model="question.title"
+      required
     />
 
     <label for="questiontext">Text</label>
@@ -14,6 +15,7 @@
       type="text"
       class="text-md text-black p-1 rounded shadow bg-slate-200 w-100 whitespace-normal"
       v-model="question.text"
+      required
     />
 
     <div>
@@ -37,48 +39,43 @@
           :checked="possibleAnswer.isCorrect"
           v-model="possibleAnswer.isCorrect"
           name="answers"
+          required
         />
         <input
           type="text"
           class="text-md text-black p-1 rounded shadow bg-slate-200 w-100 whitespace-normal"
           v-model="possibleAnswer.text"
+          required
         />
       </div>
     </div>
     <label for="position">position</label>
-    <select name="position" class="text-black" v-model="question.position">
-      <option v-for="i in this.nbQuestions" :value="i">{{ i }}</option>
+    <select
+      name="position"
+      class="text-black"
+      v-model="question.position"
+      required
+    >
+      <option v-for="i in this.nbQuestions + 1" :value="i">{{ i }}</option>
     </select>
     <input type="submit" class="btn text-white bg-blue-500" value="Save" />
   </form>
 </template>
 
 <script>
-import "../assets/main.css";
 import ImageUpload from "../components/ImageUpload.vue";
 import QuizApiService from "../services/QuizApiService";
 import ServiceAdminController from "../services/ServiceAdminController";
 export default {
   data() {
-    return { question: {}, possibleAnswers: [], nbQuestions: 0 };
+    return { question: {}, nbQuestions: 0, possibleAnswers: [{}, {}, {}, {}] };
   },
   components: { ImageUpload },
   async created() {
-    this.loadQuestion();
-  },
-  async mounted() {
     this.nbQuestions = Number(ServiceAdminController.getNbQuestions());
   },
   methods: {
-    async loadQuestion() {
-      var response = QuizApiService.getQuestionById(
-        ServiceAdminController.getCurrentQuestionId()
-      );
-      this.question = (await response).data;
-
-      this.possibleAnswers = this.question.possibleAnswers;
-    },
-    editQuestion() {
+    addQuestion() {
       this.possibleAnswers.forEach((answer) => {
         if (answer.isCorrect === "on") {
           answer.isCorrect = true;
@@ -86,15 +83,12 @@ export default {
           answer.isCorrect = false;
         }
       });
-console.log(this.question.image)
       this.question.possibleAnswers = this.possibleAnswers;
-      QuizApiService.editQuestion(JSON.stringify(this.question)).then(() => {
+      this.question.image = "falseString";
+      console.log(this.question);
+      QuizApiService.addQuestion(JSON.stringify(this.question)).then(() => {
         this.$router.go(-1);
       });
-    },
-
-    imageFileChangedHandler(b64String) {
-      this.question.image = b64String;
     },
   },
 };
