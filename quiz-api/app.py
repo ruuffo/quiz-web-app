@@ -36,6 +36,16 @@ def hello_world():
     return f"Hello, {x}"
 
 
+@app.route('/player/<player_name>', methods=['DELETE'])
+def delete_participations(player_name: str):
+    return db_utils.delete_participations(player_name=player_name)
+
+
+@app.route('/player/<player_name>', methods=['GET'])
+def get_player_exists(player_name: str):
+    return db_utils.get_player_exists(player_name)
+
+
 @app.route('/quiz-info', methods=['GET'])
 def get_quiz_info():
     return db_utils.get_quiz_info()

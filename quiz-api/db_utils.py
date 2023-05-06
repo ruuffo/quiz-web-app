@@ -50,6 +50,25 @@ def get_quiz_info():
     return {"size": nb_questions, "scores": sorted_scores}, 200
 
 
+def get_player_exists(player_name: str):
+    connection = connect_to_database()
+    cursor = connection.cursor()
+    cursor.execute(
+        "SELECT * FROM participations where playerName = ?", (player_name,))
+    participations = cursor.fetchall()
+    player_exists = bool(participations)
+    return {"playerExists": player_exists}, 200
+
+
+def delete_participations(player_name: str):
+    connection = connect_to_database()
+    cursor = connection.cursor()
+    cursor.execute(
+        "DELETE FROM participations WHERE playerName = ?", (player_name,))
+    connection.commit()
+    return "Participations have been deleted successfully", 200
+
+
 def position_reordering(position: int):
     connection = connect_to_database()
     cursor = connection.cursor()
@@ -155,7 +174,6 @@ def get_question_by_id(id: int):
     # Retourner la question sous forme de dictionnaire
 
     return question.to_json()
-
 
 
 def rebuild_db():

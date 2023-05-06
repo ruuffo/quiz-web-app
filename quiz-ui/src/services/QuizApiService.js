@@ -53,4 +53,10 @@ export default {
     );
     return response;
   },
+  checkAlreadyParticipant(playerName) {
+    return instance.get("/player/" + playerName);
+  },
+  deleteParticipations(playerName) {
+    return instance.delete("/player/" + playerName);
+  },
 };
