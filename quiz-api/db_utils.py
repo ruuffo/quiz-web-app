@@ -32,13 +32,15 @@ def get_quiz_info():
         score_participant = 0
         playerName = participant[0]
         cursor.execute(
-            "SELECT answers,question_position FROM participations WHERE playerName = ?", (playerName,))
+            "SELECT answers,question_id FROM participations WHERE playerName = ?", (playerName,))
         participations = cursor.fetchall()
+
         for participation in participations:
             answer = participation[0]
-            question_position = participation[1]
+            question_id = participation[1]
+
             question = Question.from_json(
-                get_question_by_position(question_position))
+                get_question_by_id(question_id))
             for i in range(0, len(question.possibleAnswers)):
                 if question.possibleAnswers[i]["isCorrect"] == True:
                     idx_correct_answer = i+1
@@ -46,6 +48,7 @@ def get_quiz_info():
             if answer == idx_correct_answer:
                 score_participant += 1
         scores.append({"playerName": playerName, "score": score_participant})
+    connection.commit()
     sorted_scores = sorted(scores, key=lambda x: x["score"], reverse=True)
     return {"size": nb_questions, "scores": sorted_scores}, 200
 
@@ -100,7 +103,7 @@ def add_question():
     try:
 
         cursor = connection.cursor()
-        insertion_result = cursor.execute(
+        cursor.execute(
             sql_insert_question, data_to_insert_question)
         question_id = cursor.lastrowid
 
@@ -199,7 +202,7 @@ def rebuild_db():
 
     # Create 'participations' table
         cursor.execute(
-            "CREATE TABLE participations (id INTEGER PRIMARY KEY AUTOINCREMENT,question_position INTEGER, playerName TEXT, answers INTEGER)")
+            "CREATE TABLE participations (id INTEGER PRIMARY KEY AUTOINCREMENT,question_id INTEGER, playerName TEXT, answers INTEGER)")
         connection.commit()
         connection.close()
         return Response("Ok", status=200)
@@ -218,9 +221,9 @@ def register_participation():
             return Response(response='The number of question is incorrect', status=400)
 
         for i in range(0, len(data["answers"])):
-
+            question = Question.from_json(get_question_by_position(i+1))
             cursor.execute(
-                "INSERT INTO participations (playerName,answers,question_position) VALUES (?,?,?)", (data["playerName"], data["answers"][i], i+1))
+                "INSERT INTO participations (playerName,answers,question_id) VALUES (?,?,?)", (data["playerName"], data["answers"][i], question._id))
 
         scores = get_quiz_info()[0]['scores']
         for player in scores:
@@ -321,6 +324,8 @@ def delete_question(id: int):
         if cursor.rowcount == 0:
             return Response(response=f'Question with id "{id}" does not exists', status=404)
         cursor.execute("DELETE FROM answers WHERE question_id=?", (id,))
+        cursor.execute(
+            "DELETE FROM participations WHERE question_id = ?", (id,))
         cursor.execute(
             "UPDATE questions SET position = position - 1 WHERE position > ? ", (question.position,))
 
